@@ -1,0 +1,135 @@
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Router
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+license udi pid CISCO2911/K9 sn FTX15245165-
+license boot module c2900 technology-package securityk9
+!
+!
+!
+crypto isakmp policy 1
+ encr aes
+ authentication pre-share
+ group 2
+!
+crypto isakmp key VPN_P@55w0rd address 209.165.24.49
+!
+!
+!
+crypto ipsec transform-set VPN_SET esp-aes esp-sha-hmac
+!
+crypto map VPN_MAP 10 ipsec-isakmp 
+ set peer 209.165.24.49
+ set transform-set VPN_SET 
+ match address 110
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Tunnel1
+ ip address 1.1.1.1 255.255.255.0
+ mtu 1476
+ tunnel source Serial0/0/0
+ tunnel destination 209.165.24.49
+!
+!
+interface GigabitEthernet0/0
+ ip address 192.168.0.1 255.255.255.240
+ ip nat inside
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1
+ ip address 10.0.0.1 255.255.255.252
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 OSPF_GUARD
+ ip nat inside
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/2
+ ip address 10.0.0.5 255.255.255.252
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 OSPF_GUARD
+ ip nat inside
+ duplex auto
+ speed auto
+!
+interface Serial0/0/0
+ ip address 209.165.24.33 255.255.255.240
+ ip nat outside
+ clock rate 2000000
+ crypto map VPN_MAP
+!
+interface Serial0/0/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 1
+ log-adjacency-changes
+ network 10.0.0.0 0.0.0.3 area 0
+ network 10.0.0.4 0.0.0.3 area 0
+ network 192.168.0.0 0.0.0.15 area 0
+ default-information originate
+!
+ip nat inside source list NAT interface Serial0/0/0 overload
+ip classless
+ip route 0.0.0.0 0.0.0.0 209.165.24.36 
+ip route 192.168.1.0 255.255.255.0 1.1.1.2 
+!
+ip flow-export version 9
+!
+!
+access-list 110 permit gre host 209.165.24.33 host 209.165.24.49
+ip access-list extended NAT
+ deny ip 192.168.0.0 0.0.0.15 192.168.1.0 0.0.0.255
+ deny ip 10.0.0.0 0.255.255.255 192.168.1.0 0.0.0.255
+ permit ip 192.168.0.0 0.0.0.15 any
+ permit ip 10.0.0.0 0.255.255.255 any
+!
+no cdp run
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end

@@ -1,0 +1,170 @@
+!
+version 12.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+security passwords min-length 8
+!
+hostname Router
+!
+login block-for 60 attempts 5 within 300
+!
+!
+ip dhcp relay information trust-all
+!
+!
+ip dhcp excluded-address 10.16.15.1 10.16.15.5
+ip dhcp excluded-address 10.16.15.10
+ip dhcp excluded-address 10.16.30.1 10.16.30.5
+ip dhcp excluded-address 10.16.30.10
+ip dhcp excluded-address 10.16.45.1 10.16.45.5
+ip dhcp excluded-address 10.16.45.10
+ip dhcp excluded-address 10.16.75.1 10.16.75.5
+ip dhcp excluded-address 10.16.75.1 10.16.75.10
+ip dhcp excluded-address 2.0.1.1 2.0.1.5
+ip dhcp excluded-address 2.0.1.10
+!
+ip dhcp pool LAN_15
+ network 10.16.15.0 255.255.255.0
+ default-router 10.16.15.10
+ip dhcp pool LAN_75
+ network 10.16.75.0 255.255.255.0
+ default-router 10.16.75.10
+ option 150 ip 10.16.75.3
+ip dhcp pool LAN_45
+ network 10.16.45.0 255.255.255.0
+ default-router 10.16.45.10
+ip dhcp pool LAN_30
+ network 10.16.30.0 255.255.255.0
+ default-router 10.16.30.10
+ip dhcp pool LAN_1
+ network 2.0.1.0 255.255.255.0
+ default-router 2.0.1.10
+ option 43 ip 2.0.1.4
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface FastEthernet0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface FastEthernet0/1
+ ip address 2.0.1.3 255.255.255.0
+ ip helper-address 2.0.1.3
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1.15
+ encapsulation dot1Q 15
+ ip address 10.16.15.3 255.255.255.0
+ ip helper-address 10.16.15.3
+!
+interface FastEthernet0/1.30
+ encapsulation dot1Q 30
+ ip address 10.16.30.3 255.255.255.0
+ ip helper-address 10.16.30.3
+!
+interface FastEthernet0/1.45
+ encapsulation dot1Q 45
+ ip address 10.16.45.3 255.255.255.0
+ ip helper-address 10.16.45.3
+!
+interface FastEthernet0/1.75
+ encapsulation dot1Q 75
+ ip address 10.16.75.3 255.255.255.0
+ ip helper-address 10.16.75.3
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+ip access-list extended sl_def_acl
+ deny tcp any any eq telnet
+ deny tcp any any eq www
+ deny tcp any any eq 22
+ permit tcp any any eq 22
+!
+!
+!
+!
+!
+!
+telephony-service
+ max-ephones 4
+ max-dn 4
+ ip source-address 10.16.75.3 port 2000
+!
+ephone-dn 1
+ number 101
+!
+ephone-dn 2
+ number 102
+!
+ephone-dn 3
+ number 103
+!
+ephone-dn 4
+ number 104
+!
+ephone 1
+ device-security-mode none
+ mac-address 000A.F365.BB18
+ type 7960
+ button 1:1
+!
+ephone 2
+ device-security-mode none
+ mac-address 00E0.B0B4.8A40
+ type 7960
+ button 1:2
+!
+ephone 3
+ device-security-mode none
+ mac-address 0030.F2C0.8BD7
+ type 7960
+ button 1:3
+!
+ephone 4
+ device-security-mode none
+ mac-address 000D.BD1C.DC64
+ type 7960
+ button 1:4
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end

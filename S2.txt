@@ -1,0 +1,140 @@
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname S2
+!
+enable secret 5 $1$mERr$TbJgwY1htCl7FZkaz8gkG/
+!
+!
+!
+ip ssh version 2
+ip ssh authentication-retries 2
+ip ssh time-out 60
+ip domain-name colledge.ru
+!
+username Admin privilege 1 password 7 08116C1B5C0E550516
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+interface Port-channel1
+ switchport mode trunk
+!
+interface FastEthernet0/1
+ switchport access vlan 15
+ switchport mode access
+ switchport voice vlan 75
+!
+interface FastEthernet0/2
+ switchport access vlan 30
+ switchport mode access
+ switchport voice vlan 75
+!
+interface FastEthernet0/3
+ switchport access vlan 45
+ switchport mode access
+!
+interface FastEthernet0/4
+!
+interface FastEthernet0/5
+!
+interface FastEthernet0/6
+!
+interface FastEthernet0/7
+!
+interface FastEthernet0/8
+!
+interface FastEthernet0/9
+!
+interface FastEthernet0/10
+!
+interface FastEthernet0/11
+!
+interface FastEthernet0/12
+!
+interface FastEthernet0/13
+!
+interface FastEthernet0/14
+!
+interface FastEthernet0/15
+ switchport mode trunk
+ channel-group 1 mode desirable
+!
+interface FastEthernet0/16
+ switchport mode trunk
+ channel-group 1 mode desirable
+!
+interface FastEthernet0/17
+ switchport mode trunk
+ channel-group 1 mode desirable
+!
+interface FastEthernet0/18
+ switchport mode trunk
+ channel-group 1 mode desirable
+!
+interface FastEthernet0/19
+ switchport mode trunk
+ channel-group 1 mode desirable
+!
+interface FastEthernet0/20
+ switchport mode trunk
+ channel-group 1 mode desirable
+!
+interface FastEthernet0/21
+!
+interface FastEthernet0/22
+!
+interface FastEthernet0/23
+!
+interface FastEthernet0/24
+ ip dhcp snooping trust
+ switchport mode trunk
+!
+interface GigabitEthernet0/1
+ switchport mode trunk
+!
+interface GigabitEthernet0/2
+!
+interface Vlan1
+ ip address 2.0.1.5 255.255.255.0
+!
+interface Vlan15
+ ip address 10.16.15.5 255.255.255.0
+!
+interface Vlan30
+ ip address 10.16.30.5 255.255.255.0
+!
+interface Vlan45
+ ip address 10.16.45.5 255.255.255.0
+!
+interface Vlan75
+ ip address 10.16.75.5 255.255.255.0
+!
+ip default-gateway 2.0.1.10
+!
+banner motd ^C This is a secure system. Authorized Access Only! ^C
+logging trap debugging
+logging 192.168.0.2
+!
+!
+!
+line con 0
+ login local
+!
+line vty 0 4
+ login local
+ transport input ssh
+line vty 5 15
+ login local
+ transport input ssh
+!
+!
+!
+ntp authenticate
+ntp trusted-key 1
+ntp server 192.168.0.2 key 1
+!
+end

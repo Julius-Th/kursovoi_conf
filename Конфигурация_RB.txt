@@ -1,14 +1,16 @@
 no service timestamps log datetime msec
 no service timestamps debug datetime msec
-no service password-encryption
+service password-encryption
 security passwords min-length 8
 !
-hostname Router
+hostname RB
 !
 login block-for 60 attempts 5 within 300
-login on-failure trap
+login on-failure log
 login on-success log
 !
+!
+enable secret 5 $1$mERr$TbJgwY1htCl7FZkaz8gkG/
 !
 !
 !
@@ -19,6 +21,8 @@ no ip cef
 no ipv6 cef
 !
 !
+!
+username Admin password 7 08116C1B5C0E550516
 !
 !
 crypto isakmp policy 1
@@ -40,6 +44,10 @@ crypto map VPN_MAP 10 ipsec-isakmp
 !
 !
 !
+ip ssh version 2
+ip ssh authentication-retries 2
+ip ssh time-out 60
+ip domain-name colledge.ru
 !
 !
 spanning-tree mode pvst
@@ -88,18 +96,31 @@ ip access-list extended sl_def_acl
  permit tcp any any eq 22
 access-list 110 permit gre host 209.165.24.49 host 209.165.24.33
 !
+banner motd ^C This is a secure system. Authorized Access Only! ^C
 !
 !
 !
 !
 !
+logging trap debugging
+logging 192.168.0.2
 line con 0
+ login local
 !
 line aux 0
+ login local
 !
 line vty 0 4
- login
+ login local
+ transport input ssh
+line vty 5 15
+ login local
+ transport input ssh
 !
 !
+ntp authentication-key 1 md5 080C435D0216124542595A 7
+ntp authenticate
+ntp trusted-key 1
+ntp server 192.168.0.2 key 1
 !
 end
